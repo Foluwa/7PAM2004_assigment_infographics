@@ -13,30 +13,28 @@ import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 
 
-def plot_distribution(df, ax):
+def plot_distribution(df_data, ax):
     """ Plot 1 - Bar Plot """
-    sns.histplot(df['age'], bins=20, kde=True, ax=ax)
-    
+    sns.histplot(df_data['age'], bins=20, kde=True, ax=ax)
+
     # Set the  and labels
     ax.set_xlabel('Age')
     ax.set_ylabel('Count')
     return ax
 
 
-def plot_box_plot(df, ax):
+def plot_box_plot(df_data, ax):
     """ Plot 2 - Box Plot """
-    df['amt_weekends'] = pd.to_numeric(df['amt_weekends'], errors='coerce')
-    df['amt_weekdays'] = pd.to_numeric(df['amt_weekdays'], errors='coerce')
-    df['cigarettes_per_week'] = df['amt_weekends'] * 2 + df['amt_weekdays'] * 5
-
-    ax.set_title('Distribution of Smokers by Gross Income', weight='bold', size=18)
+    df_data['amt_weekends'] = pd.to_numeric(df_data['amt_weekends'], errors='coerce')
+    df_data['amt_weekdays'] = pd.to_numeric(df_data['amt_weekdays'], errors='coerce')
+    df_data['cigarettes_per_week'] = df_data['amt_weekends'] * 2 + df_data['amt_weekdays'] * 5
 
     # Create the box plots without a grid
     sns.set_context("talk")
     sns.set(style='ticks')
-    sns.boxplot(x="gross_income", 
-                y="cigarettes_per_week", hue="gross_income", data=df, palette="coolwarm", ax=ax, width=5)
-    
+    sns.boxplot(x="gross_income",
+                y="cigarettes_per_week", hue="gross_income", data=df_data, palette="coolwarm", ax=ax, width=5)
+
     # Rotate the text on the x-axis
     for label in ax.get_xticklabels():
         label.set_rotation(45)
@@ -44,22 +42,18 @@ def plot_box_plot(df, ax):
     return ax
 
 
-def plot_pie_chart(df, ax):
-    """ Plot 3 - Pie Chart """ 
-    qualifications = df.groupby(['highest_qualification', 'smoke']).size().unstack().fillna(0)
-    labels = qualifications.index
+def plot_pie_chart(df_data, ax):
+    """ Plot 3 - Pie Chart """
+    qualifications = df_data.groupby(['highest_qualification', 'smoke']).size().unstack().fillna(0)
     num_qualifications = len(qualifications.index)
 
     # Define colors, labels, and explode
-    explode = tuple([0.1] + [0]*(num_qualifications-1))
+    explode = tuple([0.1] + [0] * (num_qualifications - 1))
     labels = qualifications.index
-
-    ax.set_title('Education Qualification of Smokers', weight='bold', size=18)
 
     # Pie chart for smokers
     p1 = ax.pie(qualifications['Yes'], labels=labels, autopct='%1.1f%%',
-                startangle=140, colors=colors, explode=explode, textprops={'color':'white'})
-    ax.set_title('Highest Qualification of Smokers')
+                startangle=140, colors=colors, explode=explode, textprops={'color': 'white'})
 
     # Adding legend to the top right corner
     ax.legend(p1[0], labels, loc='upper right')
@@ -67,10 +61,9 @@ def plot_pie_chart(df, ax):
 
 
 # Refactored function
-def plot_horizontal_bar(df, ax):
-    
+def plot_horizontal_bar(df_data, ax):
     """ Plot 4 - Horizontal Bar Plot  """
-    smoke_by_region = df.groupby(['region', 'smoke']).size().unstack().fillna(0)
+    smoke_by_region = df_data.groupby(['region', 'smoke']).size().unstack().fillna(0)
     smoke_by_region.plot(ax=ax, kind='barh', stacked=True, color=colors)
     for i, v in enumerate(smoke_by_region.columns):
         totals = smoke_by_region.iloc[:, i]
@@ -81,12 +74,13 @@ def plot_horizontal_bar(df, ax):
 
 def chart_desc(ax):
     """ Explanation of chart """
-    
+
     description = (
         """
         This dashboard shows the demographics of smokers across the United Kingdom.\n
         Smoking is more prevalent between age group 30 to 40 and least common among those over 90 years.\n
-        In terms of education, the largest group of smokers has no qualification, representing 32.54% of the smoking population,
+        In terms of education, the largest group of smokers has no qualification,
+        \n representing 32.54% of the smoking population,
         \n while A Level holders are the least at 5% of the smoking population. \n
         Midlands & East Anglia and The North are the regions with the highest group of smokers,
         \nand Wales have the least smoking population.\n
@@ -103,26 +97,22 @@ def chart_desc(ax):
     # Remove ticks
     ax.tick_params(axis='both', which='both', length=0)
     ax.set_frame_on(False)
-    
-    
-    # Add a subplot without a border
-    # ax = fig.add_subplot(gs[2, 0])
     ax.axis('off')
     ax.text(0.5, 0.5, description, ha='center', va='center', fontsize=25)
     return ax
-    
+
 
 def student_details(ax):
     """ Explanation of chart """
-    
+
     ax.axis('off')
-    
+
     # Remove the spines
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.spines['bottom'].set_visible(False)
     ax.spines['left'].set_visible(False)
-        
+
     ax.set_frame_on(False)
 
     # Add student information
@@ -130,20 +120,20 @@ def student_details(ax):
     ax.text(0.5, 0.5, student_info, ha='center', va='center', fontsize=50, style='italic', weight='bold')
     return ax
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     # Load data from CSV
     df = pd.read_csv('./smoking.csv')
 
     # Define details and colors
     title_params = {'weight': 'bold', 'size': 35, 'color': '#000000'}
     subtitle_params = {'weight': 'bold', 'size': 18, 'color': '#D01237'}
-    colors = ['#581845', '#022356', '#FFC300', '#FF5733', '#4B3874', 
+    colors = ['#581845', '#022356', '#FFC300', '#FF5733', '#4B3874',
               '#575A5F', '#C84A30', '#BC8FF5', '#0BA2E8', '#386174']
 
     # Create chart figure and axes
     fig = plt.figure(figsize=(35, 35))
-    
+
     # Initialize the grid layout
     gs = GridSpec(3, 2, figure=fig)
 
@@ -164,14 +154,14 @@ if __name__ == "__main__":
     student_details(ax6)
 
     # Set titles for each chart
-    ax1.set_title('Distribution of Smokers by Age', **subtitle_params)  
+    ax1.set_title('Distribution of Smokers by Age', **subtitle_params)
     ax2.set_title('Distribution of Smokers by Gross Income', **subtitle_params)
-    ax3.set_title('Education Qualification of Smokers',**subtitle_params)
+    ax3.set_title('Education Qualification of Smokers', **subtitle_params)
     ax4.set_title('Smoking Habits by UK Regions', **subtitle_params)
 
     #  Adjust layout
     plt.tight_layout()
-    
+
     plt.subplots_adjust(top=0.93)
 
     # Set a title for the entire figure
@@ -179,7 +169,6 @@ if __name__ == "__main__":
 
     # Set the background color
     fig.set_facecolor('#B2BEB5')
-    
+
     # Save infographics Visualisation in PNG format, 300 dpi
     fig.savefig('22048063.png', format='png', dpi=300)
-    
