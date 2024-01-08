@@ -22,6 +22,7 @@ def plot_distribution(df, ax):
     ax.set_ylabel('Count')
     return ax
 
+
 def plot_box_plot(df, ax):
     """ Plot 2 - Box Plot """
     df['amt_weekends'] = pd.to_numeric(df['amt_weekends'], errors='coerce')
@@ -41,6 +42,7 @@ def plot_box_plot(df, ax):
         label.set_rotation(45)
         label.set_horizontalalignment('right')
     return ax
+
 
 def plot_pie_chart(df, ax):
     """ Plot 3 - Pie Chart """ 
@@ -79,13 +81,15 @@ def plot_horizontal_bar(df, ax):
 
 def chart_desc(ax):
     """ Explanation of chart """
-    # Define the text to be displayed
+    
     description = (
         """
-        This dashboard shows the demographics of smokers across the United Kingdom. \n
-        Smoking is more prevalent between age group 30 to 40 and least common among those over 90 years. \n
-        In terms of education, the largest group of smokers has no qualification, representing 32.54% of the smoking population. \n
-        Midlands & East Anglia and The North are the regions with the highest group of smokers.\n
+        This dashboard shows the demographics of smokers across the United Kingdom.\n
+        Smoking is more prevalent between age group 30 to 40 and least common among those over 90 years.\n
+        In terms of education, the largest group of smokers has no qualification, representing 32.54% of the smoking population,
+        \n while A Level holders are the least at 5% of the smoking population. \n
+        Midlands & East Anglia and The North are the regions with the highest group of smokers,
+        \nand Wales have the least smoking population.\n
         Regarding gross income, the highest proportion of smokers falls within the "5,200 to 10,40" income range.
         """
     )
@@ -178,3 +182,4 @@ if __name__ == "__main__":
     
     # Save infographics Visualisation in PNG format, 300 dpi
     fig.savefig('22048063.png', format='png', dpi=300)
+    
